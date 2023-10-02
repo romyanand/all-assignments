@@ -1,0 +1,26 @@
+.todos{
+    margin: 0 auto;
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+button{
+    cursor: pointer;
+}
+.addTodo{
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2em auto;
+    gap: 20px;
+}
+.addTodo textarea{
+    width: 80%;
+    text-align: center;
+}
+.addTodo button{
+    padding: 1em;
+}

@@ -1,27 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
   const [todos, setTodos] = useState([])
-    // fetch all todos from server
+  const [text, setText] = useState({})
 
+  function handleTextChange(){
+    setText(event.target.value)
+  }
+
+  useEffect(() => {
+    fetchTodos()
+  }, [])
+  const fetchTodos = async () => {
+    const data = await fetch("http://localhost:3000/todos")
+    const json = await data.json()
+    setTodos(json)
+  }
+  const handleSubmit = async () => {
+    const addTodo = await fetch("http://localhost:3000/todos", {
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: text.length > 0 && text  
+    })
+    if(addTodo.status === 201){
+      fetchTodos()
+    }
+    else{
+      console.log("Error")
+    }
+  }
+  const Todo = (props) => {
+    const { list } = props
+    return(
+      <>
+      {list.map((todo) => {
+        return (
+          <div className='todos'>
+            <p>{todo.title}</p>
+            <p>{todo.description}</p>
+            <button onClick={async () => {
+              const url = "http://localhost:3000/todos/" + todo.id
+              const fetchDelete = await fetch(url, {
+                method: "DELETE",
+                headers: {'Content-Type': 'application/json'}
+              })
+              if(fetchDelete.status === 200){
+                fetchTodos()
+              }
+            }}>Delete</button>
+          </div>
+        )
+      })}
+      </>
+    )
+}
+  
   return (
     <>
-      <div>
-        <h1>Easy Todo App</h1>
-        <input type="text" />
-      </div>
+    <div className="addTodo">
+    <textarea onChange={handleTextChange} placeholder='Add Todo' />
+    <button onClick={handleSubmit}>Submit</button>
+    </div>
+    <Todo list={todos}/>
     </>
   )
-}
 
-function Todo(props) {
-    // Add a delete button here so user can delete a TODO.
-    return <div>
-        {props.title}
-    </div>
 }
-
 export default App
